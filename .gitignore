@@ -1,0 +1,8 @@
+.gradle/
+.idea/
+.tmp/
+/build
+
+Demo_Soure_Code/caches/
+
+Demo_Soure_Code/wrapper/dists/
