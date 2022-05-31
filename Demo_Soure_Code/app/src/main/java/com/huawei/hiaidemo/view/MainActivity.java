@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        rv = (RecyclerView) findViewById(R.id.rv);
+        rv = findViewById(R.id.rv);
         manager = new LinearLayoutManager(this);
         rv.setLayoutManager(manager);
         btnsync = (Button) findViewById(R.id.btn_sync);
