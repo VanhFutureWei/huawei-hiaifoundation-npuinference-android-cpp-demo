@@ -177,11 +177,12 @@ shared_ptr<AiModelMngerClient> LoadModelSync(JNIEnv* env, jobject jcontext,
     IF_BOOL_EXEC(clientSync == nullptr, LOGE("[AI_DEMO_SYNC] Model Manager Client make_shared error.");
                  return nullptr);
     jobject context = env->NewGlobalRef(jcontext);
-    bool ret = CloudService::Enable(env, context);
-    if (!ret) {
-        LOGW("[AI_DEMO_SYNC] Cloud service enable failed. Will run as normal mode.");
-    }
-    ret = clientSync->Init(nullptr);
+
+    // comment out due to crash on ClaudService
+//    bool ret = CloudService::Enable(env, context);
+//    LOGW("[AI_DEMO_SYNC] Cloud service enable failed. Will run as normal mode.");
+
+    bool ret = clientSync->Init(nullptr);
     IF_BOOL_EXEC(ret != SUCCESS, LOGE("[AI_DEMO_SYNC] Model Manager Init Failed."); return nullptr);
     ret = LoadSync(names, modelPaths, clientSync);
     IF_BOOL_EXEC(ret != SUCCESS, LOGE("[AI_DEMO_ASYNC] LoadSync Failed."); return nullptr);
@@ -278,9 +279,11 @@ extern "C" JNIEXPORT jobject JNICALL Java_com_huawei_hiaidemo_utils_ModelManager
         modelPaths.push_back(string(modelPath));
     }
     // load
-    IF_BOOL_EXEC(!g_clientSync, g_clientSync = LoadModelSync(env, context,
-            names, modelPaths, aipps); IF_BOOL_EXEC(
-        g_clientSync == nullptr, LOGE("[AI_DEMO_SYNC] g_clientSync loadModel is nullptr."); return nullptr));
+    IF_BOOL_EXEC(!g_clientSync,
+                 g_clientSync = LoadModelSync(env,context,names,modelPaths,aipps);
+                 IF_BOOL_EXEC(g_clientSync == nullptr,
+                             LOGE("[AI_DEMO_SYNC] g_clientSync loadModel is nullptr.");return nullptr)
+                );
     LOGI("[AI_DEMO_SYNC] sync load model INPUT NCHW : %d %d %d %d.", inputDimension[0][0].GetNumber(),
         inputDimension[0][0].GetChannel(), inputDimension[0][0].GetHeight(), inputDimension[0][0].GetWidth());
     LOGI("[AI_DEMO_SYNC] sync load model OUTPUT NCHW : %d %d %d %d.", outputDimension[0][0].GetNumber(),
